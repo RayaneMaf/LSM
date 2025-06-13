@@ -1,0 +1,1 @@
+This project encountered numerous challenges during the QML–C++ integration phase. Despite these hurdles, a four-page GUI has been successfully implemented, with each page’s screenshot embedded in this document.

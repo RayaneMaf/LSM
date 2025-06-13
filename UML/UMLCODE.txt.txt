@@ -1,0 +1,400 @@
+@startuml LibraryManagementSystem
+
+!define LIGHTBLUE #E3F2FD
+!define LIGHTGREEN #E8F5E8
+!define LIGHTYELLOW #FFF9C4
+!define LIGHTPINK #FCE4EC
+!define LIGHTGRAY #F5F5F5
+
+' User Management
+class User {
+  LIGHTBLUE
+  - userId: string
+  - name: string
+  - email: string
+  - role: UserRole
+  --
+  + User(userId="", name="", email="", role=Student)
+  + ~User()
+  --
+  + setUserId(userId=""): void
+  + setName(name=""): void
+  + setEmail(email=""): void
+  + setUserRole(role=Student): void
+  --
+  + getUserId(): const string&
+  + getName(): const string&
+  + getEmail(): const string&
+  + getUserRole(): UserRole
+  --
+  - isValidEmail(email): bool
+  - isValidUserId(userId): bool
+  - isValidName(name): bool
+  --
+  + toJson(): json
+  + {static} fromJson(j): User
+}
+
+enum UserRole {
+  LIGHTBLUE
+  Student
+  Teacher
+  LibraryEmployee
+  LibraryAdmin
+}
+
+' Resource Hierarchy
+abstract class Resource {
+  LIGHTGREEN
+  - title: string
+  - author: string
+  - resourceId: string
+  - category: string
+  - publicationYear: int
+  - isAvailable: bool
+  --
+  + Resource(title="", author="", resourceId="", category="", publicationYear=-1)
+  + {abstract} ~Resource()
+  --
+  + {abstract} displayInfo(): void
+  + {abstract} getType(): const string&
+  --
+  + setTitle(title=""): void
+  + setAuthor(author=""): void
+  + setResourceId(resourceId=""): void
+  + setCategory(category=""): void
+  + setPublicationYear(year=0): void
+  + setAvailable(available=true): void
+  --
+  + getTitle(): const string&
+  + getAuthor(): const string&
+  + getResourceId(): const string&
+  + getCategory(): const string&
+  + getPublicationYear(): int
+  + getAvailable(): bool
+  --
+  + isValidResourceId(id): bool
+  + isValidYear(year): bool
+  + isValidTitle(title): bool
+  + isValidAuthor(author): bool
+  --
+  + toLower(str): string
+  + contains(str, substr): bool
+  + matchesKeyword(keyword): bool
+  + matchesCategory(cat): bool
+  + matchesAuthor(auth): bool
+  --
+  + operator==(other): bool
+  + operator!=(other): bool
+  --
+  + {abstract} toJson(): json
+  + {static} fromJson(j): unique_ptr<Resource>
+}
+
+class Book {
+  LIGHTGREEN
+  - numberOfPages: int
+  - publisher: string
+  - isbn: string
+  - edition: string
+  --
+  + Book(title="", author="", resourceId="", category="", publicationYear=-1, publisher="", numberOfPages=-1, isbn="", edition="")
+  + ~Book()
+  --
+  + displayInfo(): void
+  + getType(): const string&
+  --
+  + setNumberOfPages(pages=0): void
+  + setPublisher(publisher=""): void
+  + setISBN(isbn=""): void
+  + setEdition(edition=""): void
+  --
+  + getNumberOfPages(): int
+  + getPublisher(): const string&
+  + getISBN(): const string&
+  + getEdition(): const string&
+  --
+  + isValidPages(pages): bool
+  + isValidISBN(isbn): bool
+  + hasISBN(): bool
+  + getFormattedInfo(): string
+  + matchesKeyword(keyword): bool
+  --
+  + toJson(): json
+  + {static} fromJson(j): Book
+}
+
+class Article {
+  LIGHTGREEN
+  - magazine: string
+  - volume: int
+  - issue: int
+  - doi: string
+  - startPage: int
+  - endPage: int
+  --
+  + Article(title="", author="", resourceId="", category="", publicationYear=-1, magazine="", volume=-1, issue=-1, doi="", startPage=-1, endPage=-1)
+  + ~Article()
+  --
+  + displayInfo(): void
+  + getType(): const string&
+  --
+  + setMagazine(magazine=""): void
+  + setVolume(volume=-1): void
+  + setIssue(issue=-1): void
+  + setDOI(doi=""): void
+  + setPageRange(start=-1, end=-1): void
+  --
+  + getMagazine(): const string&
+  + getVolume(): int
+  + getIssue(): int
+  + getDOI(): const string&
+  + getStartPage(): int
+  + getEndPage(): int
+  --
+  + isValidVolume(vol): bool
+  + isValidIssue(iss): bool
+  + isValidDOI(doi): bool
+  + isValidPageRange(start, end): bool
+  + hasDOI(): bool
+  + hasPageRange(): bool
+  + getVolumeIssueInfo(): string
+  + matchesKeyword(keyword): bool
+  --
+  + toJson(): json
+  + {static} fromJson(j): Article
+}
+
+class Thesis {
+  LIGHTGREEN
+  - university: string
+  - department: string
+  - supervisor: string
+  - thesisType: ThesisType
+  - degree: string
+  - pageCount: int
+  - abstractText: string
+  --
+  + Thesis(title="", author="", resourceId="", category="", publicationYear=-1, university="", department="", supervisor="", type=Bachelor, degree="", pages=-1, abstractText="")
+  + ~Thesis()
+  --
+  + displayInfo(): void
+  + getType(): const string&
+  --
+  + setUniversity(university=""): void
+  + setDepartment(department=""): void
+  + setSupervisor(supervisor=""): void
+  + setThesisType(type=Bachelor): void
+  + setDegree(degree=""): void
+  + setPageCount(pages=-1): void
+  + setAbstractText(abstractText=""): void
+  --
+  + getUniversity(): const string&
+  + getDepartment(): const string&
+  + getSupervisor(): const string&
+  + getThesisType(): ThesisType
+  + getDegree(): const string&
+  + getPageCount(): int
+  + getAbstractText(): const string&
+  --
+  + isValidUniversity(uni): bool
+  + isValidDepartment(dept): bool
+  + isValidSupervisor(supervisor): bool
+  + isValidPageCount(pages): bool
+  + getThesisTypeString(): string
+  + getFormattedInfo(): string
+  + hasAbstract(): bool
+  + matchesKeyword(keyword): bool
+  --
+  + toJson(): json
+  + {static} fromJson(j): Thesis
+}
+
+enum ThesisType {
+  LIGHTGREEN
+  Bachelor
+  Master
+  PhD
+  Research
+}
+
+' Loan Management
+class Loan {
+  LIGHTYELLOW
+  - loanId: string
+  - userId: string
+  - resourceId: string
+  - borrowDate: time_t
+  - dueDate: time_t
+  - returnDate: time_t
+  - isReturned: bool
+  - renewalCount: int
+  - {static} maxRenewals: int
+  - {static} loanPeriod: int
+  --
+  + Loan(loanId="", userId="", resourceId="", borrowDate=0, dueDate=0)
+  + ~Loan()
+  --
+  + getLoanId(): const string&
+  + getUserId(): const string&
+  + getResourceId(): const string&
+  + getBorrowDate(): time_t
+  + getDueDate(): time_t
+  + getReturnDate(): time_t
+  + getIsReturned(): bool
+  + getRenewalCount(): int
+  + {static} getMaxRenewals(): int
+  + {static} getLoanPeriod(): int
+  --
+  + isOverdue(): bool
+  + renew(): bool
+  + markReturned(): void
+  + {static} setMaxRenewals(max=2): void
+  + {static} setLoanPeriod(period=1209600): void
+  --
+  - isValidLoanId(loanId): bool
+  - isValidId(id): bool
+  - isValidDate(date): bool
+  --
+  + toJson(): json
+  + {static} fromJson(j): Loan
+}
+
+' Reservation Management
+class Reservation {
+  LIGHTYELLOW
+  - reservationId: string
+  - userId: string
+  - resourceId: string
+  - reservationDate: time_t
+  - fulfillmentDate: time_t
+  - status: ReservationStatus
+  --
+  + Reservation(reservationId="", userId="", resourceId="", reservationDate=0)
+  + ~Reservation()
+  --
+  + getReservationId(): const string&
+  + getUserId(): const string&
+  + getResourceId(): const string&
+  + getReservationDate(): time_t
+  + getFulfillmentDate(): time_t
+  + getReservationStatus(): ReservationStatus
+  --
+  + cancel(): void
+  + fulfill(): void
+  + isPending(): bool
+  + isCanceled(): bool
+  + isFulfilled(): bool
+  --
+  - isValidReservationId(reservationId): bool
+  - isValidId(id): bool
+  - isValidDate(date): bool
+  --
+  + toJson(): json
+  + {static} fromJson(j): Reservation
+}
+
+enum ReservationStatus {
+  LIGHTYELLOW
+  Pending
+  Fulfilled
+  Canceled
+}
+
+' Notification System
+class Notification {
+  LIGHTPINK
+  - notificationId: string
+  - userId: string
+  - message: string
+  - sentDate: time_t
+  - readFlag: bool
+  --
+  + Notification(notificationId="", userId="", message="", sentDate=0, readFlag=false)
+  + ~Notification()
+  --
+  + getNotificationId(): const string&
+  + getUserId(): const string&
+  + getMessage(): const string&
+  + getSentDate(): time_t
+  + isRead(): bool
+  --
+  + markRead(): void
+  --
+  - validateNotificationId(id): void
+  - validateUserId(id): void
+  - validateMessage(msg): void
+  - validateSentDate(date): void
+  --
+  + toJson(): json
+  + {static} fromJson(j): Notification
+}
+
+' Event Management
+class LibraryEvent {
+  LIGHTPINK
+  - eventId: string
+  - title: string
+  - description: string
+  - eventDate: time_t
+  - location: string
+  --
+  + LibraryEvent(eventId="", title="", description="", eventDate=0, location="")
+  + ~LibraryEvent()
+  --
+  + getEventId(): const string&
+  + getTitle(): const string&
+  + getDescription(): const string&
+  + getEventDate(): time_t
+  + getLocation(): const string&
+  --
+  - validateEventId(id): void
+  - validateTitle(title): void
+  - validateDescription(desc): void
+  - validateEventDate(date): void
+  - validateLocation(loc): void
+  --
+  + toJson(): json
+  + {static} fromJson(j): LibraryEvent
+}
+
+' Persistence Layer
+class Persistence {
+  LIGHTGRAY
+  --
+  + {static} saveToFile(filepath, users, resources, loans, reservations, notifications, events): bool
+  + {static} loadFromFile(filepath, users, resources, loans, reservations, notifications, events): bool
+  --
+  - {static} validateFilepath(filepath): void
+  - {static} validateFileExtension(filepath): void
+  - {static} isValidJsonFile(filepath): bool
+  - {static} createBackup(filepath): void
+}
+
+' Relationships
+User ||--o{ UserRole : has
+Resource <|-- Book
+Resource <|-- Article
+Resource <|-- Thesis
+Thesis ||--o{ ThesisType : has
+Reservation ||--o{ ReservationStatus : has
+
+User ||--o{ Loan : creates
+Resource ||--o{ Loan : involved_in
+User ||--o{ Reservation : makes
+Resource ||--o{ Reservation : reserved
+User ||--o{ Notification : receives
+
+Persistence ..> User : manages
+Persistence ..> Resource : manages
+Persistence ..> Loan : manages
+Persistence ..> Reservation : manages
+Persistence ..> Notification : manages
+Persistence ..> LibraryEvent : manages
+
+note top of Resource : Abstract base class for all library resources
+note top of Persistence : Handles JSON serialization/deserialization for all entities
+note bottom of Loan : Tracks borrowing with renewal and overdue logic
+note bottom of Reservation : Manages resource reservations with status tracking
+
+@enduml
